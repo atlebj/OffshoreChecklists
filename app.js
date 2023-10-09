@@ -4,6 +4,9 @@ const port = 3000;
 const dbModule = require('./src/db/db');
 const { ObjectId } = require('mongodb');
 
+require('dotenv').config();
+
+
 const { getChecklists, getChecklistById } = require('./src/dataAccess/dataAccess');
 
 const ChecklistType1 = require('./src/models/responsesType1');

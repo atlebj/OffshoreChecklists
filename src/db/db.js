@@ -1,10 +1,9 @@
 const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
+const dbName = 'checklistapp'; 
 
-const url = 'mongodb://checklistsapp:pxj3skdkxarK9dxT4en4gA0HwideX9HQbeFq0NkVbPINvFv4GBv9d4Hnug2AnWwwc5b5WECJGUrtACDbV9ijyg%3D%3D@checklistsapp.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@checklistsapp@';
-const dbName = 'checklistapp'; // replace with your database name
-
-const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(process.env.MONGO_URI , { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function connect() {
   try {
