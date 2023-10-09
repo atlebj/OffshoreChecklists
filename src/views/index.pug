@@ -1,0 +1,82 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= title
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/style.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css")
+    script(src='/script.js')
+  body
+    .container    
+      header
+        h1= checklist.title
+        p Procedure No: #{checklist.procedure_no}
+        p Version: #{checklist.version}
+        p Revision Date: #{checklist.revision_date}
+        p Changed By: #{checklist.changed_by}
+        //- i.fas.fa-star.star-icon(onclick='favorite()') 
+
+      each category in checklist.categories
+        section
+          h2= category.category_name
+          ul
+            each question in category.questions
+              li
+                p= question.question_id + '. ' + question.question_text
+                select(id=question.question_id + 'answer', onchange='handleSelectChange(this)', class='answer-dropdown')
+                  option(value='pending') Pending
+                  option(value='confirm') Confirm
+                  option(value='notApplicable') Not Applicable
+                br
+                label(for=question.question_id + 'comments') Comments:
+                textarea(id=question.question_id + 'comments')= question.response.comments
+
+                
+      .button-group
+        button(type='button', id='save-btn', onclick='handleSave()') Save
+        button(type='button', onclick='handleDraft()') Save as Draft
+        button(type='button', onclick='handleCancel()') Cancel
+
+      
+script.
+
+  document.getElementById('save-btn').addEventListener('click', function() {
+    // Get all dropdown elements
+    const dropdowns = document.querySelectorAll('.answer-dropdown');
+
+    // Initialize an array to store questions that are not confirmed
+    let notConfirmed = [];
+
+    // Iterate through all dropdowns
+    dropdowns.forEach(function(dropdown) {
+      // Check if the selected value is not 'confirm'
+      if (dropdown.value !== 'confirm') {
+        // Add the question ID to the notConfirmed array
+        notConfirmed.push(dropdown.id);
+      }
+    });
+
+    // Check if there are any questions not confirmed
+    if (notConfirmed.length > 0) {
+      // Alert the user with the IDs of questions not confirmed
+      alert('Please confirm the following questions before saving: ' + notConfirmed.join(', '));
+    } else {
+      // If all questions are confirmed, proceed with saving
+      handleSave();
+    }
+  });
+
+  function handleSelectChange(selectElement) {
+    const selectedValue = selectElement.value;
+    console.log('Selected value:', selectedValue);
+    // You can add more logic here to handle the selected value
+    // For example, if selectedValue is 'confirm', you might want to do something specific
+    if (selectedValue === 'confirm') {
+      console.log('User confirmed');
+      // Add your logic for when the user selects 'Confirm'
+    }
+  }
+
+

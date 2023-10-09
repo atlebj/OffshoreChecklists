@@ -1,0 +1,14 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Search Results
+    link(rel="stylesheet", href="/style.css")
+  body
+    .container
+      h1 Search Results
+      ul
+        each result in results
+          li
+            a(href=`/checklist/${result._id}`)= result.title
