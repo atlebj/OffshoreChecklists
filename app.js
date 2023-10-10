@@ -20,18 +20,20 @@ app.use(express.json()); // for parsing application/json
 
 
 app.get('/', async (req, res) => {
-    console.log('Received request');
-    try {
-      const db = await dbModule.connect();
-      const collection = db.collection('checklists');
-      const checklists = await collection.find({}).toArray();
-      console.log(checklists); // Should log all documents in the collection
-      // Pass the first checklist to the template (or choose a different way to select the checklist you want)
-      res.render('index', { checklist: checklists[4] });
-    } catch (err) {
-      console.error('Error fetching checklists:', err);
-      res.status(500).send('Internal Server Error');
-    }
+  try {
+    const searchTerm = req.query.searchTerm || '';
+    const checklists = await getChecklists(); // Assume this function retrieves all checklists from the database
+    
+    const filteredChecklists = checklists.filter(checklist => 
+      checklist.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      checklist.procedure_no.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
+    res.render('main', { checklists: filteredChecklists });
+  } catch (err) {
+    console.error('Error fetching checklists:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 app.get('/main', async (req, res) => {
@@ -106,6 +108,17 @@ app.get('/search', async (req, res) => {
     res.render('search-results', { results });
   });
 
+
+app.use(function(req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  res.render('error');
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+module.exports = app;
