@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const port = 3000;
 const dbModule = require('./src/db/db');
 const { ObjectId } = require('mongodb');
 
@@ -116,6 +115,8 @@ app.use(function(req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
