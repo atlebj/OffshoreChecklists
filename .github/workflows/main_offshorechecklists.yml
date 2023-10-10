@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'offshorechecklists'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5CB15CD42FAA4BA195071E0289B020D9 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5084645443F248E999F43AC06C283883 }}
           package: .
