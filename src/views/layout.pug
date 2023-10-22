@@ -8,6 +8,27 @@ html(lang="en")
     link(rel="stylesheet", href="/style.css")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css")
     link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap")
-    script(src='/script.js')
   body
-    block content
+    .container
+        h1 OffshoreChecklists
+        nav.navbar.navbar-expand-lg.navbar-light.bg-light
+            button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+                span.navbar-toggler-icon
+            #navbarNav.collapse.navbar-collapse
+                ul.navbar-nav.mr-auto
+                    li.nav-item.active
+                        a.nav-link(href="#") Home
+                    li.nav-item
+                        a.nav-link(href="#") About
+                    li.nav-item
+                        a.nav-link(href="#") Services
+                    li.nav-item
+                        a.nav-link(href="#") Contact
+        form.form-inline.my-2.my-lg-0(action="/", method="GET")
+            input.form-control.mr-sm-2(type='text' name='searchTerm' placeholder='Search by Title or Procedure No...')
+            button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Search
+        block content
+    script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js")
+    script(src='/script.js')

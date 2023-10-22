@@ -11,31 +11,36 @@ html(lang="en")
   body
     .container    
       header
-        h1= checklist.title
-        p Procedure No: #{checklist.procedure_no}
-        p Version: #{checklist.version}
-        p Revision Date: #{checklist.revision_date}
-        p Changed By: #{checklist.changed_by}
+        h1(id="titleInput")= checklist.title 
+        p 
+          span Procedure No: 
+          span(id="procedureNoInput") #{checklist.procedure_no}
+        p
+          span Version:
+          span(id="versionInput") #{checklist.version}
+        p
+          span Revision Date:
+          span(id="revisionDateInput") #{checklist.revision_date}
+        p 
+          span Changed By:
+          span(id="changedByInput") #{checklist.changed_by}
         //- i.fas.fa-star.star-icon(onclick='favorite()') 
 
       each category in checklist.categories
         section
-          h2= category.category_name
+          h3= category.category_name
           ul
-            each question in category.questions
-              li
-                p= question.question_id + '. ' + question.question_text
-                select(id=question.question_id + 'answer', onchange='handleSelectChange(this)', class='answer-dropdown')
-                  option(value='pending') Pending
-                  option(value='confirm') Confirm
-                  option(value='notApplicable') Not Applicable
-                br
-                label(for=question.question_id + 'comments') Comments:
-                textarea(id=question.question_id + 'comments')= question.response.comments
-
+              each question in category.questions
+                li.question-area(data-category=category.category_name)
+                    p.question-text(id=question.question_id + 'question_text')= question.question_id + '. ' + question.question_text
+                    button(id=question.question_id + 'answer', onclick='handleConfirmation(this)', class='confirm-button') Click to Confirm
+                    br
+                    i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
+                    textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')= question.response.comments
+              
                 
       .button-group
-        button(type='button', id='save-btn', onclick='handleSave()') Save
+        button(type='button', id='save-btn') Save
         button(type='button', onclick='handleDraft()') Save as Draft
         button(type='button', onclick='handleCancel()') Cancel
 
@@ -43,18 +48,18 @@ html(lang="en")
 script.
 
   document.getElementById('save-btn').addEventListener('click', function() {
-    // Get all dropdown elements
-    const dropdowns = document.querySelectorAll('.answer-dropdown');
+    // Get all confirm buttons
+    const buttons = document.querySelectorAll('.confirm-button');
 
     // Initialize an array to store questions that are not confirmed
     let notConfirmed = [];
 
-    // Iterate through all dropdowns
-    dropdowns.forEach(function(dropdown) {
-      // Check if the selected value is not 'confirm'
-      if (dropdown.value !== 'confirm') {
+    // Iterate through all buttons
+    buttons.forEach(function(button) {
+      // Check if the button text is not '✓ Confirmed'
+      if (button.textContent !== '✓ Confirmed') {
         // Add the question ID to the notConfirmed array
-        notConfirmed.push(dropdown.id);
+        notConfirmed.push(button.id);
       }
     });
 
@@ -68,6 +73,7 @@ script.
     }
   });
 
+
   function handleSelectChange(selectElement) {
     const selectedValue = selectElement.value;
     console.log('Selected value:', selectedValue);
@@ -78,5 +84,23 @@ script.
       // Add your logic for when the user selects 'Confirm'
     }
   }
+
+  function handleConfirmation(buttonElement) {
+    const buttonState = buttonElement.textContent;
+    const questionTextElement = document.getElementById(buttonElement.id.replace('answer', 'question_text'));
+
+    if (buttonState === 'Click to Confirm') {
+        buttonElement.textContent = '✓ Confirmed';
+        buttonElement.classList.add('confirmed');
+        questionTextElement.classList.remove('unanswered-question');
+    } else {
+        buttonElement.textContent = 'Click to Confirm';
+        buttonElement.classList.remove('confirmed');
+        questionTextElement.classList.add('unanswered-question');
+    }
+  }
+
+
+
 
 

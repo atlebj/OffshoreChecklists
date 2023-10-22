@@ -1,0 +1,12 @@
+each question in category.questions
+                  li.question-area(data-category=category.category_name)
+                      p= question.question_id + '. ' + question.question_text
+                      select(id=question.question_id + 'answer', onchange='handleSelectChange(this)', class='answer-dropdown')
+                          option(value='pending') Pending
+                          option(value='confirm') Confirm
+                          option(value='notApplicable') Not Applicable
+                      br
+                      i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
+                      textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')= question.response.comments
+
+

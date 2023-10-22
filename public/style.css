@@ -5,6 +5,14 @@ body {
   margin: 0;
 }
 
+body {
+  background-image: url('./images/bg1.jpg'); 
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+
 header {
   background-color: #4CAF50;
   color: white;
@@ -47,7 +55,7 @@ body {
   background-color: #81abe9; /* Light Sky Blue */
   color: #003366; /* Deep Blue */
   font-family: Roboto, sans-serif;
-  
+    
 }
 
 /* body {
@@ -57,14 +65,61 @@ body {
   padding: 0;
 } */
 
+.navbar {
+  /* position: fixed; */ /* Comment or remove this line */
+  /* top: 0; */ /* Comment or remove this line */
+  /* width: 100%; */ /* Comment or remove this line */
+  z-index: 1000; /* Ensure the navbar stays on top */
+  margin-bottom: 20px;
+  /* padding-left: 15px; */  /* Comment or remove this line */
+  /* padding-right: 15px; */ /* Comment or remove this line */
+}
+
+.confirm-button {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.confirm-button.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.unanswered-question {
+  font-weight: bold;
+}
+
+.comment-icon {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.question-area {
+  background-color: #f9f9f9; /* Light gray background */
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0; /* Thin border at the bottom */
+  border-radius: 4px;
+  margin-bottom: 10px; /* Space between questions */
+}
+
+.question-area p {
+  font-weight: 500; /* Slightly bolder text for the question */
+}
+
 .container {
   margin: 2em auto;
   max-width: 600px;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
   padding: 1em;
+  /* padding-top: 70px; */ /* Comment or remove this line */
   border-radius: 8px;
   box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.2);
+  padding-left: 15px;  /* Adjust as needed */
+  padding-right: 15px; /* Adjust as needed */
 }
+
 
 .card {
   margin-bottom: 1em;

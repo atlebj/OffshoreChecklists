@@ -1,16 +1,11 @@
 extends layout
 
 block content
-    .container
-      header
-        img(src="/logo.png", alt="OTL Logo", id="logo")
-         
-      form(action="/main", method="GET")
-        .search-bar
-          input.search-input(type='text' name='searchTerm' placeholder='Search by Title or Procedure No...')
-          button.search-button(type='submit') Search
-      ul
-        each checklist in checklists
-          li.search-result-item
-            a(href=`/checklist/${checklist._id}`)
-              | #{checklist.procedure_no} - #{checklist.title}
+  .container
+    header
+      img(src="/logo.png", alt="OTL Logo", id="logo")
+    ul
+      each checklist in checklists
+        li.search-result-item
+          a(href=`/checklist/${checklist._id}`)
+            | #{checklist.procedure_no} - #{checklist.title}
