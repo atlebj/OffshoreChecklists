@@ -27,8 +27,9 @@ const checklistSchema = new Schema({
   changed_by: { type: String, required: true },
   location: { type: String, default: "" },
   types: { type: String, default: "" },  
-  status: { type: String, default: "" }, // Added status field
-  categories: { type: [categorySchema], default: [] }
+  status: { type: String, default: "" }, 
+  categories: { type: [categorySchema], default: [] },
+  isDraft: { type: Boolean, default: false }// Added status field
 });
 
 const ChecklistType1 = model('responsesType1', checklistSchema);

@@ -1,0 +1,59 @@
+extends layout2
+
+block content
+  .container
+    .row.align-items-center(style="margin-bottom: 20px;")
+      .col-md-6
+        form(action="/search" method="GET")
+          .input-group.mb-3
+            input(type="text" class="form-control" placeholder="Search checklists" name="q")
+            .input-group-append
+              button.btn.btn-outline-success.my-2.my-sm-0(class="btn btn-outline-secondary" type="submit") Search
+      .col-md-6.text-right
+        p Welcome Testuser!     
+
+  .jumbotron.custom-jumbotron
+    h2 Recent Checklists
+    ol.styled-list
+      each checklist in recentChecklists
+        li.list-item
+          a(href=`/checklist/${checklist.id}`)= checklist.title
+
+  .jumbotron.custom-jumbotron
+    h2 My Draft Checklists
+    ol.styled-list
+      
+
+  .jumbotron.custom-jumbotron
+    h2 Completed Checklists Today
+    
+    // Structure for the third section
+
+
+  script.
+      // Code to handle search goes here
+      document.getElementById('searchBar').addEventListener('input', function() {
+        const searchTerm = this.value;
+        if (searchTerm) {
+          // Code to fetch and display search results
+          document.getElementById('defaultChecklists').style.display = 'none';
+          document.getElementById('searchResults').style.display = 'block';
+        } else {
+          // Code to hide search results and show default checklists
+          document.getElementById('searchResults').style.display = 'none';
+          document.getElementById('defaultChecklists').style.display = 'block';
+        }
+      });
+      // Code to handle displaying default checklists goes here
+      // Code to handle displaying search results goes here
+      // Code to handle displaying draft checklists goes here
+      // Code to handle displaying custom section goes here
+      // Code to handle displaying favorite checklists goes here
+      // Code to handle displaying recent checklists goes here
+      // Code to handle displaying the number of checklists goes here
+      // Code to handle displaying the number of draft checklists goes here
+      // Code to handle displaying the number of favorite checklists goes here
+      // Code to handle displaying the number of recent checklists goes here
+      // Code to handle displaying the number of search results goes here
+      // Code to handle displaying the number of default checklists goes here
+

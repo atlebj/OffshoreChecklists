@@ -33,7 +33,7 @@ html(lang="en")
               each question in category.questions
                 li.question-area(data-category=category.category_name)
                     p.question-text(id=question.question_id + 'question_text')= question.question_id + '. ' + question.question_text
-                    button(id=question.question_id + 'answer', onclick='handleConfirmation(this)', class='confirm-button') Click to Confirm
+                    button.btn.btn-primary(id=question.question_id + 'answer', onclick='handleConfirmation(this)', class='confirm-button') Click to Confirm
                     br
                     i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
                     textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')= question.response.comments

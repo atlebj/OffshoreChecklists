@@ -3,7 +3,23 @@ extends layout
 block content
   .container
     header
-      img(src="/logo.png", alt="OTL Logo", id="logo")
+      h2 Recent Checklists
+    ul
+      each checklist in checklists
+        li.search-result-item
+          a(href=`/checklist/${checklist._id}`)
+            | #{checklist.procedure_no} - #{checklist.title}
+  .container
+    header
+      h2 Draft Checklists
+    ul
+      each checklist in checklists
+        li.search-result-item
+          a(href=`/checklist/${checklist._id}`)
+            | #{checklist.procedure_no} - #{checklist.title}
+  .container
+    header
+      h2 Completed Checklists
     ul
       each checklist in checklists
         li.search-result-item

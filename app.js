@@ -5,6 +5,7 @@ const { connect } = require('./src/db/db');
 const { getChecklists, getChecklistById } = require('./src/dataAccess/dataAccess');
 const checklistSaveRoutes = require('./src/routes/checklistSaveRoutes');
 const Checklist = require('./src/models/checklists');
+const ChecklistType1 = require('./src/models/responsesType1');
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -13,15 +14,29 @@ app.use(checklistSaveRoutes);
 app.set('view engine', 'pug');
 app.set('views', './src/views');
 
+app.get('/main2', async (req, res) => {
+  try {
+    // Fetch necessary data here (e.g., recent checklists, drafts)
+    const recentChecklists = await getChecklists(); // Implement this function
+    res.render('main2', { recentChecklists });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 app.get('/', async (req, res) => {
   try {
     const searchTerm = req.query.searchTerm || '';
     const checklists = await getChecklists();
+    //const draftChecklists = await ChecklistType1.find({ isDraft: true });
     const filteredChecklists = checklists.filter(checklist => 
       checklist.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       checklist.procedure_no.toLowerCase().includes(searchTerm.toLowerCase())
     );
     res.render('main', { checklists: filteredChecklists });
+    
   } catch (err) {
     console.error('Error fetching checklists:', err);
     res.status(500).send('Internal Server Error');
@@ -58,7 +73,7 @@ app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.render('error');
+  //res.render('error');
 });
 
 const port = process.env.PORT || 3000;

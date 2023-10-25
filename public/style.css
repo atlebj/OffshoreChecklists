@@ -52,8 +52,7 @@ input[type=text], textarea {
 }
 
 body {
-  background-color: #81abe9; /* Light Sky Blue */
-  color: #003366; /* Deep Blue */
+  
   font-family: Roboto, sans-serif;
     
 }
@@ -119,7 +118,6 @@ body {
   padding-left: 15px;  /* Adjust as needed */
   padding-right: 15px; /* Adjust as needed */
 }
-
 
 .card {
   margin-bottom: 1em;
