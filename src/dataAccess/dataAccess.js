@@ -52,6 +52,21 @@ async function getChecklists() {
   return result;
 }
 
+async function getResponses() {
+  const result = await ChecklistType1.find();
+  //console.log("Responses from DB:", result);
+  return result;
+}
+
+async function getResponseById(id) {
+  try {
+    return ChecklistType1.findById(id).exec();
+  } catch (err) {
+    console.error('Error in getResponseById:', err);
+    throw err;
+  }
+}
+
 // Fetch a specific checklist by its ID
 async function getChecklistById(id) {
   try {
@@ -71,5 +86,7 @@ async function getRecentChecklists() {
 module.exports = {
   getChecklists,
   getChecklistById,
-  getRecentChecklists
+  getRecentChecklists,
+  getResponses,
+  getResponseById
 };

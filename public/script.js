@@ -10,70 +10,73 @@
 //const { response } = require("../app");
 
 // Window onload event to fetch all checklists on startup
-window.onload = () => {
-  fetch('http://localhost:3000/get-all-checklists')
-    .then(response => response.json())
-    .then(data => {
-      console.log('All checklists:', data);
-      // Optional: render all checklists on startup
-      // renderSearchResults(data);
+/* window.onload = () => {
+  fetch("http://localhost:3000/get-all-checklists")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
     })
-    .catch(error => {
-      console.error('Error fetching all checklists:', error);
+    .then((data) => {
+      console.log("All checklists:", data);
+    })
+    .catch((error) => {
+      console.error("Error fetching all checklists:", error);
     });
+}; */
 
-     
-};
 
 // Add event listeners to all comment icons
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Get all elements with the class .comment-icon
-  const commentIcons = document.querySelectorAll('.comment-icon');
+  const commentIcons = document.querySelectorAll(".comment-icon");
 
   // Add event listener to each comment icon
-  commentIcons.forEach(icon => {
-      icon.addEventListener('click', function() {
-          const targetId = icon.getAttribute('data-target');
-          const textarea = document.getElementById(targetId);
-          if (textarea.style.display === 'none') {
-              textarea.style.display = 'block';
-          } else {
-              textarea.style.display = 'none';
-          }
-      });
+  commentIcons.forEach((icon) => {
+    icon.addEventListener("click", function () {
+      const targetId = icon.getAttribute("data-target");
+      const textarea = document.getElementById(targetId);
+      if (textarea.style.display === "none") {
+        textarea.style.display = "block";
+      } else {
+        textarea.style.display = "none";
+      }
+    });
   });
 });
 
 // Function to handle rendering of search results
 function renderSearchResults(data) {
-  const resultsElement = document.getElementById('results');
-  resultsElement.innerHTML = '';
-  data.forEach(list => {
-    const listItem = document.createElement('li');
+  const resultsElement = document.getElementById("results");
+  resultsElement.innerHTML = "";
+  data.forEach((list) => {
+    const listItem = document.createElement("li");
     listItem.textContent = list.title;
-    listItem.className = 'checklist-title'; // Add class for styling
+    listItem.className = "checklist-title"; // Add class for styling
 
     // Add click event listener to the checklist title
-    listItem.addEventListener('click', function() {
+    listItem.addEventListener("click", function () {
       // Toggle display of checklist items on click
       const itemsList = listItem.nextElementSibling;
-      itemsList.style.display = itemsList.style.display === 'block' ? 'none' : 'block';
+      itemsList.style.display =
+        itemsList.style.display === "block" ? "none" : "block";
     });
 
     // Create a ul element to hold checklist items (hidden by default)
-    const itemsList = document.createElement('ul');
-    itemsList.style.display = 'none'; // Hide items by default
-    list.items.forEach(item => {
-      const itemElement = document.createElement('li');
+    const itemsList = document.createElement("ul");
+    itemsList.style.display = "none"; // Hide items by default
+    list.items.forEach((item) => {
+      const itemElement = document.createElement("li");
 
       // Create a checkbox for each item
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
       checkbox.id = item;
       checkbox.name = item;
 
       // Create a label for the checkbox
-      const label = document.createElement('label');
+      const label = document.createElement("label");
       label.htmlFor = item;
       label.appendChild(document.createTextNode(item));
 
@@ -90,30 +93,35 @@ function renderSearchResults(data) {
 }
 
 
+
 function gatherChecklistAnswers(currentUser) {
   const answersByCategory = {};
 
-  // Select all dropdowns with class 'answer-dropdown' and iterate over them
-  const dropdowns = document.querySelectorAll('.answer-dropdown');
-  dropdowns.forEach(dropdown => {
+  // Select all buttons with class 'confirm-button' and iterate over them
+  const buttons = document.querySelectorAll(".confirm-button");
+  buttons.forEach((button) => {
     // Find the closest 'li.question-area' element to access the data-category attribute
-    const questionArea = dropdown.closest('.question-area');
-    const category = questionArea ? questionArea.getAttribute('data-category') : 'Unknown category';
+    const questionArea = button.closest(".question-area");
+    const category = questionArea
+      ? questionArea.getAttribute("data-category")
+      : "Unknown category";
 
-    // Extract the question ID and text from the dropdown ID
-    const questionId = dropdown.id.replace('answer', '');
-    const questionText = questionArea.querySelector('p').textContent;
+    // Extract the question ID and text from the button ID
+    const questionId = button.id.replace("answer", "");
+    const questionText = questionArea.querySelector("p").textContent;
 
     // Find the corresponding textarea for comments using the question ID
-    const commentsTextarea = document.getElementById(questionId + 'comments');
-
+    const commentsTextarea = document.getElementById(questionId + "comments");
+    
+    const cUser = currentUser;
     // Create an object representing the answer and comment for this question
     const answer = {
       questionId: questionId,
       questionText: questionText,
-      answer: dropdown.value, // The selected value from the dropdown
+      answer: button.textContent === "✓ Confirmed" ? "confirm" : "not_confirm", // Adjust based on your needs
       comments: commentsTextarea.value, // The text from the comments textarea
-      confirmedBy : currentUser
+      confirmedBy: cUser
+      
     };
 
     // Group answers by category
@@ -128,36 +136,33 @@ function gatherChecklistAnswers(currentUser) {
 }
 
 
-
-
-
 function checkAllConfirmed() {
   // Select all dropdowns with class 'answer-dropdown'
-  const dropdowns = document.querySelectorAll('.answer-dropdown');
+  const dropdowns = document.querySelectorAll(".answer-dropdown");
 
   // Use the Array.prototype.every method to check if all dropdowns have the value 'confirm'
-  return Array.from(dropdowns).every(dropdown => dropdown.value === 'confirm');
+  return Array.from(dropdowns).every(
+    (dropdown) => dropdown.value === "confirm"
+  );
 }
-
 
 function handleSave() {
   // Implement save functionality
   //console.log('Save button clicked');
   //console.log('All questions confirmed. Saving...');
-  const title = document.getElementById('titleInput').textContent; // Replace 'titleInput' with the actual ID of the title input field
-  const procedure_no = document.getElementById('procedureNoInput').textContent;
-  const version = document.getElementById('versionInput').textContent;
-  const revision_date = document.getElementById('revisionDateInput').textContent;
-  const changed_by = document.getElementById('changedByInput').textContent;
+  const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
+  const procedure_no = document.getElementById("procedureNoInput").textContent;
+  const version = document.getElementById("versionInput").textContent;
+  const revision_date =
+    document.getElementById("revisionDateInput").textContent;
+  const changed_by = document.getElementById("changedByInput").textContent;
   const current_date = new Date().toISOString().slice(0, 10);
   const currentUser = "John Doe"; // Replace with the actual current user */
   const type = "type1";
   const location = "location1";
-    
-  const checklistAnswers = gatherChecklistAnswers(currentUser); // You need to implement this function
-  const status = checkAllConfirmed() ? 'Completed' : 'Draft'; // And this function too  
-  //console.log('Checklist answers:', checklistAnswers);
 
+  const checklistAnswers = gatherChecklistAnswers(currentUser);   
+  
   const data = {
     title: title,
     procedure_no: procedure_no,
@@ -168,44 +173,44 @@ function handleSave() {
     checklistAnswers: checklistAnswers,
     type: type,
     location: location,
-    status: status
+    status: "Completed",
   };
 
-  console.log('Data to save:', data);
+  console.log("Data to save from client:", data);
 
-  fetch('/save-checklist', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  fetch("/save-checklist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+  })
+    .then((response) => response.text())
+    .then((message) => {
+      console.log(message);
+      if (message === "Response saved successfully") {
+        // adjust this based on the actual success message
+        window.location.href = "/"; // redirect to the main page
+      } else {
+        alert("Failed to save checklist.");
+      }
     })
-    .then(response => response.text())
-    .then(message => {
-        console.log(message);
-        if (message === "Response saved successfully") { // adjust this based on the actual success message
-            window.location.href = '/'; // redirect to the main page
-        } else {
-            alert('Failed to save checklist.');
-        }
-    })
-    .catch(err => console.error('Error saving:', err));
+    .catch((err) => console.error("Error saving:", err));
 }
 
 function handleDraft() {
-  // Implement save as draft functionality
-  console.log('Save as Draft button clicked');
-  const title = document.getElementById('titleInput').textContent; // Replace 'titleInput' with the actual ID of the title input field
-  const procedure_no = document.getElementById('procedureNoInput').textContent;
-  const version = document.getElementById('versionInput').textContent;
-  const revision_date = document.getElementById('revisionDateInput').textContent;
-  const changed_by = document.getElementById('changedByInput').textContent;
+  const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
+  const procedure_no = document.getElementById("procedureNoInput").textContent;
+  const version = document.getElementById("versionInput").textContent;
+  const revision_date =
+    document.getElementById("revisionDateInput").textContent;
+  const changed_by = document.getElementById("changedByInput").textContent;
   const current_date = new Date().toISOString().slice(0, 10);
   const currentUser = "John Doe"; // Replace with the actual current user */
   const type = "type1";
   const location = "location1";
-    
-  const checklistAnswers = gatherChecklistAnswers(currentUser); // You need to implement this function
-  const status = checkAllConfirmed() ? 'Completed' : 'Draft'; // And this function too  
 
+  const checklistAnswers = gatherChecklistAnswers(currentUser); 
+  
+  //console.log('Checklist answers:', checklistAnswers);
   const data = {
     title: title,
     procedure_no: procedure_no,
@@ -216,39 +221,41 @@ function handleDraft() {
     checklistAnswers: checklistAnswers,
     type: type,
     location: location,
-    status: status
+    status: "draft",
   };
 
-  data.status = 'Draft';
+  //console.log("Data to save:", data);
 
-    fetch('/save-checklist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+  fetch("/save-checklist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.text())
+    .then((message) => {
+      console.log(message);
+      if (message === "Response saved successfully") {
+        // adjust this based on the actual success message
+        window.location.href = "/"; // redirect to the main page
+      } else {
+        alert("Failed to save checklist.");
+      }
     })
-    .then(response => response.text())
-    .then(message => {
-        console.log(message);
-        if (message === "Draft saved successfully") { // adjust this based on the actual success message
-            displaySuccessMessage(); // Function to display a success message or modal
-        } else {
-            alert('Failed to save draft.');
-        }
-    })
-    .catch(err => console.error('Error saving draft:', err));
-
+    .catch((err) => console.error("Error saving:", err));
 }
 
 function handleCancel() {
   // Implement cancel functionality
-  console.log('Cancel button clicked');
-  window.location.href = '/';
+  console.log("Cancel button clicked");
+  window.location.href = "/";
 }
 
 function displaySuccessMessage() {
-  const userChoice = confirm('Draft saved successfully. Would you like to return to the main page?');
+  window.location.href = "/";
+  /* const userChoice = confirm(
+    "Draft saved successfully. Would you like to return to the main page?"
+  );
   if (userChoice) {
-      window.location.href = '/'; // redirect to the main page
-  }
+    window.location.href = "/"; // redirect to the main page
+  } */
 }
-

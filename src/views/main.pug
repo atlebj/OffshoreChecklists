@@ -13,15 +13,15 @@ block content
     header
       h2 Draft Checklists
     ul
-      each checklist in checklists
+      each draftChecklist in draftChecklists
         li.search-result-item
-          a(href=`/checklist/${checklist._id}`)
-            | #{checklist.procedure_no} - #{checklist.title}
+          a(href=`/draftChecklists/${draftChecklist._id}`)
+            | #{draftChecklist.procedure_no} - #{draftChecklist.title}
   .container
     header
       h2 Completed Checklists
     ul
-      each checklist in checklists
+      each completedChecklist in completedChecklists
         li.search-result-item
-          a(href=`/checklist/${checklist._id}`)
-            | #{checklist.procedure_no} - #{checklist.title}
+          a(href=`/completedChecklist/${completedChecklist._id}`)
+            | #{completedChecklist.procedure_no} - #{completedChecklist.title}

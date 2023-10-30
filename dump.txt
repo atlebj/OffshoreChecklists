@@ -10,3 +10,13 @@ each question in category.questions
                       textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')= question.response.comments
 
 
+app.get('/test-checklists', async (req, res) => {
+  try {
+    const checklists = await Checklist.find();
+    console.log("Direct query checklists:", checklists);
+    res.json(checklists);
+  } catch (err) {
+    console.error('Error in test-checklists route:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});

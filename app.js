@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const { connect } = require('./src/db/db');
 const { getChecklists, getChecklistById } = require('./src/dataAccess/dataAccess');
+const { getResponses, getResponseById } = require('./src/dataAccess/dataAccess');
 const checklistSaveRoutes = require('./src/routes/checklistSaveRoutes');
 const Checklist = require('./src/models/checklists');
 const ChecklistType1 = require('./src/models/responsesType1');
@@ -28,14 +29,33 @@ app.get('/main2', async (req, res) => {
 
 app.get('/', async (req, res) => {
   try {
+
+    const allChecklists = await ChecklistType1.find().sort({ _id: -1 });
+
     const searchTerm = req.query.searchTerm || '';
     const checklists = await getChecklists();
+    const responses = await getResponses();
+    
+    const draftChecklists = responses.filter(chk => chk.status === 'draft').slice(0, 5);
+
+    console.log("Draft Responses from DB in app.js:", draftChecklists);
+    const completedChecklists = responses.filter(chk => chk.status === 'Completed').slice(0, 5);
     //const draftChecklists = await ChecklistType1.find({ isDraft: true });
     const filteredChecklists = checklists.filter(checklist => 
       checklist.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       checklist.procedure_no.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    res.render('main', { checklists: filteredChecklists });
+
+    const filteredDraftChecklists = draftChecklists.filter(checklist =>
+      checklist.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      checklist.procedure_no.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    res.render('main', { 
+      checklists: filteredChecklists,
+      draftChecklists: filteredDraftChecklists,
+      completedChecklists: completedChecklists
+    });
     
   } catch (err) {
     console.error('Error fetching checklists:', err);
@@ -57,17 +77,47 @@ app.get('/checklist/:id', async (req, res) => {
   }
 });
 
-app.get('/test-checklists', async (req, res) => {
+app.get('/responses/:id', async (req, res) => {
   try {
-    const checklists = await Checklist.find();
-    console.log("Direct query checklists:", checklists);
-    res.json(checklists);
+    const responseId = req.params.id;
+    const response = await getResponseById(responseId);
+    if (!response) {
+      return res.status(404).send('Response not found');
+    }
+    res.render('responses', { response: response });
   } catch (err) {
-    console.error('Error in test-checklists route:', err);
+    console.error('Error fetching response:', err);
     res.status(500).send('Internal Server Error');
   }
 });
 
+app.get('/draftChecklist/:id', async (req, res) => {
+  try {
+    const draftChecklistId = req.params.id;
+    const draftChecklist = await getChecklistById(draftChecklistId); // or another function for draft checklists
+    if (!draftChecklist) {
+      return res.status(404).send('Draft Checklist not found');
+    }
+    res.render('checklist', { checklist: draftChecklist }); // adjust the render view and object as necessary
+  } catch (err) {
+    console.error('Error fetching draft checklist:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/completedChecklists/:id', async (req, res) => {
+  try {
+    const completedChecklistId = req.params.id;
+    const completedChecklist = await getChecklistById(completedChecklistId); // or another function for completed checklists
+    if (!completedChecklist) {
+      return res.status(404).send('Completed Checklist not found');
+    }
+    res.render('checklist', { checklist: completedChecklist }); // adjust the render view and object as necessary
+  } catch (err) {
+    console.error('Error fetching completed checklist:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
@@ -75,6 +125,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   //res.render('error');
 });
+
 
 const port = process.env.PORT || 3000;
 
