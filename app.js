@@ -91,19 +91,25 @@ app.get('/responses/:id', async (req, res) => {
   }
 });
 
-app.get('/draftChecklist/:id', async (req, res) => {
+app.get('/draftChecklists/:id', async (req, res) => {
   try {
     const draftChecklistId = req.params.id;
-    const draftChecklist = await getChecklistById(draftChecklistId); // or another function for draft checklists
+    console.log("Fetching draft checklist with ID:", draftChecklistId); // Log the ID being fetched
+    
+    // Using getResponseById() instead of getChecklistById() since drafts are stored in the responsesType1 collection
+    const draftChecklist = await getResponseById(draftChecklistId);
+    console.log("Draft Checklist fetched:", draftChecklist); // Log the fetched data
+    
     if (!draftChecklist) {
       return res.status(404).send('Draft Checklist not found');
     }
-    res.render('checklist', { checklist: draftChecklist }); // adjust the render view and object as necessary
+    res.render('draftChecklist', { checklist: draftChecklist });
   } catch (err) {
     console.error('Error fetching draft checklist:', err);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 app.get('/completedChecklists/:id', async (req, res) => {
   try {

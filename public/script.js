@@ -259,3 +259,28 @@ function displaySuccessMessage() {
     window.location.href = "/"; // redirect to the main page
   } */
 }
+
+
+function handleConfirmation(buttonElement) {
+  const buttonState = buttonElement.textContent;
+  const questionTextElement = document.getElementById(buttonElement.id.replace('answer', 'question_text'));
+
+  if (buttonState === 'Click to Confirm') {
+      buttonElement.textContent = '✓ Confirmed';
+      buttonElement.classList.add('confirmed');
+      questionTextElement.classList.remove('unanswered-question');
+  } else {
+      buttonElement.textContent = 'Click to Confirm';
+      buttonElement.classList.remove('confirmed');
+      questionTextElement.classList.add('unanswered-question');
+  }
+}
+
+window.onload = function() {
+  const buttons = document.querySelectorAll('.confirm-button');
+  buttons.forEach(button => {
+    if (button.textContent === '✓ Confirmed') {
+      handleConfirmation(button);
+    }
+  });
+}
