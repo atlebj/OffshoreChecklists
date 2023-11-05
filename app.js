@@ -7,6 +7,8 @@ const { getResponses, getResponseById } = require('./src/dataAccess/dataAccess')
 const checklistSaveRoutes = require('./src/routes/checklistSaveRoutes');
 const Checklist = require('./src/models/checklists');
 const ChecklistType1 = require('./src/models/responsesType1');
+const apiRoutes = require('./src/routes/api');
+const cors = require('cors');
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -14,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(checklistSaveRoutes);
 app.set('view engine', 'pug');
 app.set('views', './src/views');
+app.use('/api', apiRoutes);
+app.use(cors());
 
 app.get('/main2', async (req, res) => {
   try {

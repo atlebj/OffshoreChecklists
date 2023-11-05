@@ -12,6 +12,7 @@ html(lang="en")
     .container    
       header
         h1(id="titleInput")= checklist.title 
+        input(type='hidden', id='draftId', value=checklist._id)
 
       each category in checklist.categories
         section
@@ -39,10 +40,98 @@ html(lang="en")
                   textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')
 
       .button-group
-        button(type='button', onclick='handleSave()') Update Draft
+        button(type='button', onclick='handleUpdate()') Update Draft
         button(type='button', onclick='handleComplete()') Mark as Completed
         button(type='button', onclick='handleCancel()') Cancel
 
+script.
+  
+
+  function collectData() {
+    const questionsData = [];
+    document.querySelectorAll('.question-area').forEach(question => {
+        const questionId = question.querySelector('.question-text').id;
+        
+        const answerDropdown = question.querySelector('.answer-dropdown');
+        if (!answerDropdown) {
+            console.error('Answer dropdown not found for question:', questionId);
+            return; // Skip this question if the dropdown is not found
+        }
+        
+        const commentsTextarea = question.querySelector('.comment-textarea');
+        if (!commentsTextarea) {
+            console.error('Comments textarea not found for question:', questionId);
+            return; // Skip this question if the textarea is not found
+        }
+        
+        questionsData.push({
+            question_id: questionId,
+            answer: answerDropdown.value, // getting the selected value from the dropdown
+            comments: commentsTextarea.value
+        });
+    });
+    
+    return questionsData;
+  }
+  function handleUpdate() {
+    const data = collectData(); // This function should return the updated draft data
+    sendDataToServer(data);
+  }
+
+  function sendDataToServer(rawData) {
+  const draftId = document.getElementById('draftId').value;
+  
+  // Transform data into the required structure
+  const checklistAnswers = rawData.reduce((acc, item) => {
+    // Assuming category can be derived from question_id like "1.1" where "1" would be the category
+    const category = item.question_id.split('.')[0];
+    const categoryName = "Category " + category; // You need to replace this with actual category name mapping if necessary
+    
+    // Initialize the category array if not already present
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
+    }
+    
+    // Add the question to the appropriate category
+    acc[categoryName].push({
+      questionId: item.question_id.replace('question_text', ''),
+      questionText: document.getElementById(item.question_id).innerText,
+      answer: item.answer,
+      comments: item.comments,
+      currentUser: "Username" // Replace with actual username if needed
+    });
+
+    return acc;
+  }, {});
+
+  const dataToSend = {
+    checklistAnswers: checklistAnswers,
+    currentUser: "Username" // Replace with actual username if needed
+  };
+
+  console.log('Transformed data:', JSON.stringify(dataToSend));
+  
+  fetch('/api/update-checklist/' + encodeURIComponent(draftId), {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(dataToSend)
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Checklist updated successfully!', data);
+      // Redirect or handle the UI update here after successful operation
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+  }
 
 
 
