@@ -1,32 +1,3 @@
-// Event listener for search form submission
-/* document.getElementById('search-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const query = document.getElementById('search-input').value;
-  fetch(`/search?q=${query}`)
-    .then(response => response.json())
-    .then(data => renderSearchResults(data));
-}); */
-
-//const { response } = require("../app");
-
-// Window onload event to fetch all checklists on startup
-/* window.onload = () => {
-  fetch("http://localhost:3000/get-all-checklists")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("All checklists:", data);
-    })
-    .catch((error) => {
-      console.error("Error fetching all checklists:", error);
-    });
-}; */
-
-
 // Add event listeners to all comment icons
 document.addEventListener("DOMContentLoaded", function () {
   // Get all elements with the class .comment-icon
@@ -92,8 +63,6 @@ function renderSearchResults(data) {
   });
 }
 
-
-
 function gatherChecklistAnswers(currentUser) {
   const answersByCategory = {};
 
@@ -134,7 +103,6 @@ function gatherChecklistAnswers(currentUser) {
   // Return the object grouped by category
   return answersByCategory;
 }
-
 
 function checkAllConfirmed() {
   // Select all dropdowns with class 'answer-dropdown'
@@ -200,8 +168,7 @@ function handleDraft() {
   const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
   const procedure_no = document.getElementById("procedureNoInput").textContent;
   const version = document.getElementById("versionInput").textContent;
-  const revision_date =
-    document.getElementById("revisionDateInput").textContent;
+  const revision_date = document.getElementById("revisionDateInput").textContent;
   const changed_by = document.getElementById("changedByInput").textContent;
   const current_date = new Date().toISOString().slice(0, 10);
   const currentUser = "John Doe"; // Replace with the actual current user */
@@ -224,8 +191,6 @@ function handleDraft() {
     status: "draft",
   };
 
-  //console.log("Data to save:", data);
-
   fetch("/save-checklist", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -243,6 +208,53 @@ function handleDraft() {
     })
     .catch((err) => console.error("Error saving:", err));
 }
+
+function handleUpdateDraft() {
+
+  const draftId = document.getElementById('draftId').value; // Retrieve the draft ID
+  const title = document.getElementById("titleInput").textContent;
+  const procedure_no = document.getElementById("procedureNoInput").textContent;
+  const version = document.getElementById("versionInput").textContent;
+  const revision_date = document.getElementById("revisionDateInput").textContent;
+  const changed_by = document.getElementById("changedByInput").textContent;
+  const current_date = new Date().toISOString().slice(0, 10);
+  const currentUser = "John Doe"; // Replace with the actual current user
+  const type = "type1";
+  const location = "location1";
+
+  const checklistAnswers = gatherChecklistAnswers(currentUser);
+
+  const data = {
+    _id: draftId, // Include the draft ID in the data object
+    title: title,
+    procedure_no: procedure_no,
+    version: version,
+    revision_date: revision_date,
+    changed_by: changed_by,
+    current_date: current_date,
+    checklistAnswers: checklistAnswers,
+    type: type,
+    location: location,
+    status: "draft",
+  };
+
+  fetch("/update-checklist/" + draftId, { // Change the URL to your update endpoint
+    method: "PUT", // Change the method to PUT for update
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+  .then((response) => response.text())
+  .then((message) => {
+    console.log(message);
+    if (message === "Checklist updated successfully") { // Adjust based on your success message
+      window.location.href = "/"; // Redirect to the main page or confirmation page
+    } else {
+      alert("Failed to update checklist.");
+    }
+  })
+  .catch((err) => console.error("Error updating:", err));
+}
+
 
 function handleCancel() {
   // Implement cancel functionality
