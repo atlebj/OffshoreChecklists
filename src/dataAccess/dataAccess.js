@@ -1,7 +1,7 @@
 
 // This file contains the data access layer for the application.
 const ChecklistType1 = require('../models/responsesType1');
-const Checklist = require('../models/checklists') // Adjust the path to where you saved the model
+const Checklist = require('../models/checklists') 
 
 // Fetch all checklists or filter by title if searchTerm is provided
 async function getChecklists() {

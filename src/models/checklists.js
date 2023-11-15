@@ -32,6 +32,6 @@ const checklistSchema = new Schema({
   categories: [categorySchema]
 });
 
-const Checklist = model('checklists', checklistSchema);
+const Checklist = model('checklist', checklistSchema);
 
 module.exports = Checklist;

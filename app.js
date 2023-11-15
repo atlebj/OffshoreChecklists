@@ -19,17 +19,6 @@ app.set('views', './src/views');
 app.use('/api', apiRoutes);
 app.use(cors());
 
-app.get('/main2', async (req, res) => {
-  try {
-    // Fetch necessary data here (e.g., recent checklists, drafts)
-    const recentChecklists = await getChecklists(); // Implement this function
-    res.render('main2', { recentChecklists });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
 
 app.get('/', async (req, res) => {
   try {
@@ -113,7 +102,6 @@ app.get('/draftChecklists/:id', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 app.get('/completedChecklists/:id', async (req, res) => {
   try {
