@@ -99,7 +99,7 @@ function gatherChecklistAnswers(currentUser) {
     }
     answersByCategory[category].push(answer);
   });
-
+  
   // Return the object grouped by category
   return answersByCategory;
 }
@@ -130,7 +130,7 @@ function handleSave() {
   const location = "location1";
 
   const checklistAnswers = gatherChecklistAnswers(currentUser);
-
+  console.log("Checklist answers:*****************************************************", checklistAnswers);
   const data = {
     title: title,
     procedure_no: procedure_no,
@@ -167,6 +167,7 @@ function handleSave() {
 }
 
 function handleDraft() {
+  
   const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
   const procedure_no = document.getElementById("procedureNoInput").textContent;
   const version = document.getElementById("versionInput").textContent;
@@ -177,8 +178,9 @@ function handleDraft() {
   const type = "type1";
   const location = "location1";
 
+  
   const checklistAnswers = gatherChecklistAnswers(currentUser);
-
+  console.log("Checklist answers:*****************************************************", checklistAnswers);
   //console.log('Checklist answers:', checklistAnswers);
   const data = {
     title: title,
@@ -205,7 +207,7 @@ function handleDraft() {
       console.log(message);
       if (message === "Response saved successfully") {
         // adjust this based on the actual success message
-        window.location.href = "/"; // redirect to the main page
+        //window.location.href = "/"; // redirect to the main page
       } else {
         alert("Failed to save checklist.");
       }
@@ -214,7 +216,9 @@ function handleDraft() {
 }
 
 function handleDraftUpdate() {
-  alert("update-checklist");
+
+  console.log("Update button clicked");
+  
   const draftId = document.getElementById('draftId').value;
   const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
   const procedure_no = document.getElementById("procedureNoInput").textContent;
@@ -227,7 +231,7 @@ function handleDraftUpdate() {
   const location = "location1";
 
   const checklistAnswers = gatherChecklistAnswers(currentUser);
-
+  console.log("Checklist answers:*****************************************************", checklistAnswers);
   //console.log('Checklist answers:', checklistAnswers);
   const data = {
     title: title,
@@ -242,30 +246,30 @@ function handleDraftUpdate() {
     status: "draft",
   };
 
-  fetch("/update-checklist/" + draftID, {
+  fetch("/update-checklist/" + draftId, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data),
     })
-    .then((response) => response.text())
-    .then((message) => {
-      console.log(message);
-      if (message === "Response saved successfully") {
-        // adjust this based on the actual success message
-        window.location.href = "/"; // redirect to the main page
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      if (data.message === "Checklist updated successfully!") {
+        window.location.href = "/";
       } else {
         alert("Failed to save checklist.");
       }
     })
+
     .catch((err) => console.error("Error saving:", err));
-  }
-
-
-
-
-
+}
 
 function handleCancel() {
   // Implement cancel functionality
@@ -283,7 +287,6 @@ function displaySuccessMessage() {
   } */
 }
 
-
 function handleConfirmation(buttonElement) {
   const buttonState = buttonElement.textContent;
   const questionTextElement = document.getElementById(buttonElement.id.replace('answer', 'question_text'));
@@ -299,11 +302,3 @@ function handleConfirmation(buttonElement) {
   }
 }
 
-window.onload = function () {
-  const buttons = document.querySelectorAll('.confirm-button');
-  buttons.forEach(button => {
-    if (button.textContent === '✓ Confirmed') {
-      handleConfirmation(button);
-    }
-  });
-}

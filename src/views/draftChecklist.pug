@@ -9,9 +9,9 @@ html(lang="en")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css")
     script(src='/script.js')
   body
-  .container    
+    .container    
       header
-        h1(id="titleInput")= checklist.title
+        h1(id="titleInput")= checklist.title 
         input(type='hidden', id='draftId', value=checklist._id)
         p 
           span Procedure No: 
@@ -25,8 +25,7 @@ html(lang="en")
         p 
           span Changed By:
           span(id="changedByInput") #{checklist.changed_by}
-         
-
+        
       each category in checklist.categories
         section
           h3= category.category_name
@@ -34,33 +33,108 @@ html(lang="en")
             each question in category.questions
               li.question-area(data-category=category.category_name)
                 p.question-text(id=question.question_id + 'question_text')= question.question_id + '. ' + question.question_text
-                
-                if question.response
-                  select.answer-dropdown(id=question.question_id + 'answer_dropdown')
-                    option(value="confirm", selected=question.response.answer === 'confirm') Confirm
-                    option(value="not_confirm", selected=question.response.answer === 'not_confirm') Not Confirm
-                  
-                  i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
-                  
-                  textarea.comment-textarea(id=question.question_id + 'comments', style=question.response.comments ? '' : 'display: none;')= question.response.comments
+                button.btn.btn-primary(id=question.question_id + 'answer', onclick='handleConfirmation(this)', class='confirm-button') Click to Confirm
+                br
+                i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
+                if question.response && question.response.comments
+                  textarea.comment-textarea(id=question.question_id + 'comments')= question.response.comments
                 else
-                  select.answer-dropdown
-                    option(value="confirm") Confirm
-                    option(value="not_confirm") Not Confirm
-                  
-                  i.fas.fa-comment-alt.comment-icon(data-target=question.question_id + 'comments')
-                  
                   textarea.comment-textarea(id=question.question_id + 'comments', style='display: none;')
-
+        
       .button-group
-        button(type='button', onclick='handleDraftUpdate') Update Draft
+        button(type='button', id='update-btn') Update Draft
         button(type='button', onclick='handleComplete()') Mark as Completed
         button(type='button', onclick='handleCancel()') Cancel
 
+script.
+  function handleSelectChange(selectElement) {
+    const selectedValue = selectElement.value;
+    console.log('Selected value:', selectedValue);
+    // You can add more logic here to handle the selected value
+    // For example, if selectedValue is 'confirm', you might want to do something specific
+    if (selectedValue === 'confirm') {
+      console.log('User confirmed');
+      // Add your logic for when the user selects 'Confirm'
+    }
+  }
 
+  function handleConfirmation(buttonElement) {
+    const buttonState = buttonElement.textContent;
+    const questionTextElement = document.getElementById(buttonElement.id.replace('answer', 'question_text'));
 
+    if (buttonState === 'Click to Confirm') {
+        buttonElement.textContent = '✓ Confirmed';
+        buttonElement.classList.add('confirmed');
+        questionTextElement.classList.remove('unanswered-question');
+    } else {
+        buttonElement.textContent = 'Click to Confirm';
+        buttonElement.classList.remove('confirmed');
+        questionTextElement.classList.add('unanswered-question');
+    }
+  }
+  document.addEventListener("DOMContentLoaded", function () {
 
+    document.getElementById('update-btn').addEventListener('click', function() {
+      alert('Update button clicked');
+      handleDraftUpdate();
+    });
 
+    var checklistData = !{JSON.stringify(checklist)};
 
+    console.log('Checklist data:', checklistData);
+        // Log each question's details
+        if (checklistData.categories && checklistData.categories.length > 0) {
+          checklistData.categories.forEach(category => {
+            if (category.questions && category.questions.length > 0) {
+              category.questions.forEach(question => {
+                console.log(`Question ID: ${question.question_id}, Answer: ${question.response?.answer}, Comments: ${question.response?.comments}`);
+              });
+            }
+          });
+        }
+    // Set button states based on the checklist data
+    checklistData.categories.forEach(category => {
+      category.questions.forEach(question => {
+        const buttonId = question.question_id + 'answer'; // Adjust to match the ID format
+        const button = document.getElementById(buttonId);
+        if (button) {
+          if (question.response.answer === 'confirm') {
+            button.textContent = '✓ Confirmed';
+            button.classList.add('confirmed');
+            // Additional styling for confirmed state
+          } else {
+            button.textContent = 'Click to Confirm';
+            button.classList.remove('confirmed');
+            // Additional styling for not confirmed state
+          }
+        }
+      });
+    });
+  });
+  document.getElementById('save-btn').addEventListener('click', function() {
+    // Get all confirm buttons
+    const buttons = document.querySelectorAll('.confirm-button');
 
+    // Initialize an array to store questions that are not confirmed
+    let notConfirmed = [];
 
+    // Iterate through all buttons
+    buttons.forEach(function(button) {
+      // Check if the button text is not '✓ Confirmed'
+      if (button.textContent !== '✓ Confirmed') {
+        // Add the question ID to the notConfirmed array
+        notConfirmed.push(button.id);
+      }
+    });
+
+    // Check if there are any questions not confirmed
+    if (notConfirmed.length > 0) {
+      // Alert the user with the IDs of questions not confirmed
+      alert('Please confirm the following questions before saving: ' + notConfirmed.join(', '));
+    } else {
+      // If all questions are confirmed, proceed with saving
+      handleSave();
+    }
+  // Set event listener for update button
+    
+  });

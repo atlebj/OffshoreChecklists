@@ -31,3 +31,79 @@ app.get('/main2', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+function handleDraft() {
+  const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
+  const procedure_no = document.getElementById("procedureNoInput").textContent;
+  const version = document.getElementById("versionInput").textContent;
+  const revision_date = document.getElementById("revisionDateInput").textContent;
+  const changed_by = document.getElementById("changedByInput").textContent;
+  const current_date = new Date().toISOString().slice(0, 10);
+  const currentUser = "John Doe"; // Replace with the actual current user */
+  const type = "type1";
+  const location = "location1";
+
+  const checklistAnswers = gatherChecklistAnswers(currentUser);
+
+  //console.log('Checklist answers:', checklistAnswers);
+  const data = {
+    title: title,
+    procedure_no: procedure_no,
+    version: version,
+    revision_date: revision_date,
+    changed_by: changed_by,
+    current_date: current_date,
+    checklistAnswers: checklistAnswers,
+    type: type,
+    location: location,
+    status: "draft",
+  };
+
+  fetch("/save-checklist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data),
+    })
+    .then((response) => response.text())
+    .then((message) => {
+      console.log(message);
+      if (message === "Response saved successfully") {
+        // adjust this based on the actual success message
+        window.location.href = "/"; // redirect to the main page
+      } else {
+        alert("Failed to save checklist.");
+      }
+    })
+    .catch((err) => console.error("Error saving:", err));
+}
+
+
+
+// Function to run on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log('Checklist data:', checklistData);
+        // Log each question's details
+        if (checklistData.categories && checklistData.categories.length > 0) {
+          checklistData.categories.forEach(category => {
+            if (category.questions && category.questions.length > 0) {
+              category.questions.forEach(question => {
+                console.log(`Question ID: ${question.question_id}, Answer: ${question.response?.answer}, Comments: ${question.response?.comments}`);
+              });
+            }
+          });
+        }
+      });
+
+
+      
+window.onload = function () {
+  const buttons = document.querySelectorAll('.confirm-button');
+  buttons.forEach(button => {
+    if (button.textContent === '✓ Confirmed') {
+      handleConfirmation(button);
+    }
+  });
+}
