@@ -19,7 +19,6 @@ app.set('views', './src/views');
 app.use('/api', apiRoutes);
 app.use(cors());
 
-
 app.get('/', async (req, res) => {
   try {
 
@@ -31,7 +30,7 @@ app.get('/', async (req, res) => {
     
     const draftChecklists = responses.filter(chk => chk.status === 'draft').slice(0, 5);
 
-    console.log("Draft Responses from DB in app.js:", draftChecklists);
+    //console.log("Draft Responses from DB in app.js:", draftChecklists);
     const completedChecklists = responses.filter(chk => chk.status === 'Completed').slice(0, 5);
     //const draftChecklists = await ChecklistType1.find({ isDraft: true });
     const filteredChecklists = checklists.filter(checklist => 
@@ -123,7 +122,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   //res.render('error');
 });
-
 
 const port = process.env.PORT || 3000;
 

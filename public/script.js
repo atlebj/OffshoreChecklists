@@ -71,9 +71,9 @@ function gatherChecklistAnswers(currentUser) {
   buttons.forEach((button) => {
     // Find the closest 'li.question-area' element to access the data-category attribute
     const questionArea = button.closest(".question-area");
-    const category = questionArea
-      ? questionArea.getAttribute("data-category")
-      : "Unknown category";
+    const category = questionArea ?
+      questionArea.getAttribute("data-category") :
+      "Unknown category";
 
     // Extract the question ID and text from the button ID
     const questionId = button.id.replace("answer", "");
@@ -81,7 +81,7 @@ function gatherChecklistAnswers(currentUser) {
 
     // Find the corresponding textarea for comments using the question ID
     const commentsTextarea = document.getElementById(questionId + "comments");
-    
+
     const cUser = currentUser;
     // Create an object representing the answer and comment for this question
     const answer = {
@@ -90,7 +90,7 @@ function gatherChecklistAnswers(currentUser) {
       answer: button.textContent === "✓ Confirmed" ? "confirm" : "not_confirm", // Adjust based on your needs
       comments: commentsTextarea.value, // The text from the comments textarea
       confirmedBy: cUser
-      
+
     };
 
     // Group answers by category
@@ -129,8 +129,8 @@ function handleSave() {
   const type = "type1";
   const location = "location1";
 
-  const checklistAnswers = gatherChecklistAnswers(currentUser);   
-  
+  const checklistAnswers = gatherChecklistAnswers(currentUser);
+
   const data = {
     title: title,
     procedure_no: procedure_no,
@@ -147,10 +147,12 @@ function handleSave() {
   console.log("Data to save from client:", data);
 
   fetch("/save-checklist", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data),
+    })
     .then((response) => response.text())
     .then((message) => {
       console.log(message);
@@ -175,8 +177,8 @@ function handleDraft() {
   const type = "type1";
   const location = "location1";
 
-  const checklistAnswers = gatherChecklistAnswers(currentUser); 
-  
+  const checklistAnswers = gatherChecklistAnswers(currentUser);
+
   //console.log('Checklist answers:', checklistAnswers);
   const data = {
     title: title,
@@ -192,10 +194,12 @@ function handleDraft() {
   };
 
   fetch("/save-checklist", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data),
+    })
     .then((response) => response.text())
     .then((message) => {
       console.log(message);
@@ -209,23 +213,23 @@ function handleDraft() {
     .catch((err) => console.error("Error saving:", err));
 }
 
-function handleUpdateDraft() {
-
-  const draftId = document.getElementById('draftId').value; // Retrieve the draft ID
-  const title = document.getElementById("titleInput").textContent;
+function handleDraftUpdate() {
+  alert("update-checklist");
+  const draftId = document.getElementById('draftId').value;
+  const title = document.getElementById("titleInput").textContent; // Replace 'titleInput' with the actual ID of the title input field
   const procedure_no = document.getElementById("procedureNoInput").textContent;
   const version = document.getElementById("versionInput").textContent;
   const revision_date = document.getElementById("revisionDateInput").textContent;
   const changed_by = document.getElementById("changedByInput").textContent;
   const current_date = new Date().toISOString().slice(0, 10);
-  const currentUser = "John Doe"; // Replace with the actual current user
+  const currentUser = "John Doe"; // Replace with the actual current user */
   const type = "type1";
   const location = "location1";
 
   const checklistAnswers = gatherChecklistAnswers(currentUser);
 
+  //console.log('Checklist answers:', checklistAnswers);
   const data = {
-    _id: draftId, // Include the draft ID in the data object
     title: title,
     procedure_no: procedure_no,
     version: version,
@@ -238,22 +242,29 @@ function handleUpdateDraft() {
     status: "draft",
   };
 
-  fetch("/update-checklist/" + draftId, { // Change the URL to your update endpoint
-    method: "PUT", // Change the method to PUT for update
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-  .then((response) => response.text())
-  .then((message) => {
-    console.log(message);
-    if (message === "Checklist updated successfully") { // Adjust based on your success message
-      window.location.href = "/"; // Redirect to the main page or confirmation page
-    } else {
-      alert("Failed to update checklist.");
-    }
-  })
-  .catch((err) => console.error("Error updating:", err));
-}
+  fetch("/update-checklist/" + draftID, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data),
+    })
+    .then((response) => response.text())
+    .then((message) => {
+      console.log(message);
+      if (message === "Response saved successfully") {
+        // adjust this based on the actual success message
+        window.location.href = "/"; // redirect to the main page
+      } else {
+        alert("Failed to save checklist.");
+      }
+    })
+    .catch((err) => console.error("Error saving:", err));
+  }
+
+
+
+
 
 
 function handleCancel() {
@@ -278,17 +289,17 @@ function handleConfirmation(buttonElement) {
   const questionTextElement = document.getElementById(buttonElement.id.replace('answer', 'question_text'));
 
   if (buttonState === 'Click to Confirm') {
-      buttonElement.textContent = '✓ Confirmed';
-      buttonElement.classList.add('confirmed');
-      questionTextElement.classList.remove('unanswered-question');
+    buttonElement.textContent = '✓ Confirmed';
+    buttonElement.classList.add('confirmed');
+    questionTextElement.classList.remove('unanswered-question');
   } else {
-      buttonElement.textContent = 'Click to Confirm';
-      buttonElement.classList.remove('confirmed');
-      questionTextElement.classList.add('unanswered-question');
+    buttonElement.textContent = 'Click to Confirm';
+    buttonElement.classList.remove('confirmed');
+    questionTextElement.classList.add('unanswered-question');
   }
 }
 
-window.onload = function() {
+window.onload = function () {
   const buttons = document.querySelectorAll('.confirm-button');
   buttons.forEach(button => {
     if (button.textContent === '✓ Confirmed') {
