@@ -105,11 +105,17 @@ app.get('/draftChecklists/:id', async (req, res) => {
 app.get('/completedChecklists/:id', async (req, res) => {
   try {
     const completedChecklistId = req.params.id;
-    const completedChecklist = await getChecklistById(completedChecklistId); // or another function for completed checklists
+    console.log("Fetching completed checklist with ID:", completedChecklistId);
+    
+    const completedChecklist = await getResponseById(completedChecklistId);
+    console.log("Completed Checklist fetched:", completedChecklist);
+
     if (!completedChecklist) {
+      console.log('No completed checklist found with ID:', completedChecklistId);
       return res.status(404).send('Completed Checklist not found');
     }
-    res.render('checklist', { checklist: completedChecklist }); // adjust the render view and object as necessary
+
+    res.render('completedChecklist', { checklist: completedChecklist });
   } catch (err) {
     console.error('Error fetching completed checklist:', err);
     res.status(500).send('Internal Server Error');

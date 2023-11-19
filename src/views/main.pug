@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  .container
+  .container#searchResultsContainer
     header
       h2 Recent Checklists
     ul
@@ -9,7 +9,7 @@ block content
         li.search-result-item
           a(href=`/checklist/${checklist._id}`)
             | #{checklist.procedure_no} - #{checklist.title}
-  .container
+  .container#draftChecklistsContainer
     header
       h2 Draft Checklists
     ul
@@ -17,11 +17,11 @@ block content
         li.search-result-item
           a(href=`/draftChecklists/${draftChecklist._id}`)
             | #{draftChecklist.procedure_no} - #{draftChecklist.title}
-  .container
+  .container#completedChecklistsContainer
     header
       h2 Completed Checklists
     ul
       each completedChecklist in completedChecklists
         li.search-result-item
-          a(href=`/completedChecklist/${completedChecklist._id}`)
+          a(href=`/completedChecklists/${completedChecklist._id}`)
             | #{completedChecklist.procedure_no} - #{completedChecklist.title}

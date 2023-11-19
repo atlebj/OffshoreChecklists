@@ -1,0 +1,42 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= title
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/style.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css")
+  body
+    .container    
+      header
+        h1(id="titleInput")= checklist.title 
+        p.status-badge
+          span(class="badge badge-success") Completed
+        p 
+          span Procedure No: 
+          span(id="procedureNoInput") #{checklist.procedure_no}
+        p
+          span Version:
+          span(id="versionInput") #{checklist.version}
+        p
+          span Revision Date:
+          span(id="revisionDateInput") #{checklist.revision_date}
+        p 
+          span Changed By:
+          span(id="changedByInput") #{checklist.changed_by}
+        
+      each category in checklist.categories
+        section
+          h3= category.category_name
+          ul
+            each question in category.questions
+              li.question-area(data-category=category.category_name)
+                p.question-text(id=question.question_id + 'question_text')= question.question_id + '. ' + question.question_text
+                p.response-text(class='response-text')= question.response.answer === 'confirm' ? 'Confirmed' : 'Not Confirmed'
+                if question.response.comments
+                  p.comment-text(id=question.question_id + 'comments')= question.response.comments
+
+      .button-group
+        button(type='button', onclick='window.location="/"', class='btn btn-primary') Back to Main
+

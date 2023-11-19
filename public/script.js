@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to handle rendering of search results
 function renderSearchResults(data) {
-  const resultsElement = document.getElementById("results");
+  const resultsElement = document.getElementById("searchResultsContainer");
   resultsElement.innerHTML = "";
   data.forEach((list) => {
     const listItem = document.createElement("li");
@@ -130,7 +130,7 @@ function handleSave() {
   const location = "location1";
 
   const checklistAnswers = gatherChecklistAnswers(currentUser);
-  console.log("Checklist answers:*****************************************************", checklistAnswers);
+  //console.log("Checklist answers:*****************************************************", checklistAnswers);
   const data = {
     title: title,
     procedure_no: procedure_no,
@@ -180,7 +180,7 @@ function handleDraft() {
 
   
   const checklistAnswers = gatherChecklistAnswers(currentUser);
-  console.log("Checklist answers:*****************************************************", checklistAnswers);
+  //console.log("Checklist answers:*****************************************************", checklistAnswers);
   //console.log('Checklist answers:', checklistAnswers);
   const data = {
     title: title,

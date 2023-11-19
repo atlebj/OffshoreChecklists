@@ -13,22 +13,29 @@ router.post('/save-checklist', async (req, res) => {
         //console.log("Received data:", JSON.stringify(userChecklistData, null, 2));        
         // Adjusting the structure of checklistAnswers to match the Mongoose schema
         const categories = Object.keys(userChecklistData.checklistAnswers).map(categoryName => {
-            const questions = userChecklistData.checklistAnswers[categoryName].map(question => {
-                return {
-                    question_id: question.questionId,
-                    question_text: question.questionText,
-                    response: {
-                        answer: question.answer,
-                        comments: question.comments || "",
-                        confirmedBy: userChecklistData.currentUser // Saving currentUser in each response
-                    }
-                };
-            });
             return {
                 category_name: categoryName,
-                questions: questions
+                questions: userChecklistData.checklistAnswers[categoryName].map(question => {
+                    // Extract the question text without the ID, if it's already included
+                    let questionText = question.questionText;
+                    const idPrefix = question.questionId + ". ";
+                    if (questionText.startsWith(idPrefix)) {
+                        questionText = questionText.substring(idPrefix.length);
+                    }
+        
+                    return {
+                        question_id: question.questionId,
+                        question_text: questionText,
+                        response: {
+                            answer: question.answer,
+                            comments: question.comments || "",
+                            confirmedBy: userChecklistData.currentUser
+                        }
+                    };
+                })
             };
         });
+        
 
         // Creating a copy of the userChecklistData object and updating the categories field
         const dataToSave = { ...userChecklistData, categories };
@@ -67,9 +74,16 @@ router.put('/update-checklist/:id', async (req, res) => {
             return {
                 category_name: categoryName,
                 questions: userChecklistData.checklistAnswers[categoryName].map(question => {
+                    // Extract the question text without the ID, if it's already included
+                    let questionText = question.questionText;
+                    const idPrefix = question.questionId + ". ";
+                    if (questionText.startsWith(idPrefix)) {
+                        questionText = questionText.substring(idPrefix.length);
+                    }
+        
                     return {
                         question_id: question.questionId,
-                        question_text: question.questionText,
+                        question_text: idPrefix + questionText, // Prepend the ID only once
                         response: {
                             answer: question.answer,
                             comments: question.comments || "",
@@ -79,6 +93,7 @@ router.put('/update-checklist/:id', async (req, res) => {
                 })
             };
         });
+        
 
         // Prepare the data to update
         const updateData = {
